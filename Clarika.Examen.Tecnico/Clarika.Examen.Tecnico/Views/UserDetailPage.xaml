@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Clarika.Examen.Tecnico.Views.UserDetailPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:convert="clr-namespace:Clarika.Examen.Tecnico.Converters"
+    xmlns:ff="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+    xmlns:local="clr-namespace:Clarika.Examen.Tecnico.ViewModels"
+    Title="{Binding Title}"
+    BackgroundColor="White"
+    Shell.PresentationMode="ModalAnimated">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <convert:GenderConvert x:Key="genderConvert" />
+
+            <convert:InverterConverter x:Key="inverteConvert" />
+
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid
+        Margin="10"
+        HorizontalOptions="FillAndExpand"
+        VerticalOptions="Start">
+
+        <RefreshView
+            Grid.Row="0"
+            x:DataType="local:UserDetailViewModel"
+            Command="{Binding LoadUserIdCommand}"
+            IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+
+            <ScrollView IsVisible="{Binding Error, Converter={StaticResource inverteConvert}}" VerticalScrollBarVisibility="Never">
+                <Frame BackgroundColor="{StaticResource NavigationPrimary}" CornerRadius="20">
+                    <StackLayout>
+
+                        <ff:CachedImage
+                            HeightRequest="35"
+                            HorizontalOptions="StartAndExpand"
+                            Source="close"
+                            WidthRequest="35">
+                            <ff:CachedImage.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding CancelarCommand}" />
+                            </ff:CachedImage.GestureRecognizers>
+                        </ff:CachedImage>
+                        <ff:CachedImage
+                            Margin="0,0,20,0"
+                            ErrorPlaceholder="perfil"
+                            HeightRequest="150"
+                            HorizontalOptions="Center"
+                            Source="{Binding User.Photo}"
+                            VerticalOptions="Center"
+                            WidthRequest="150" />
+                        <StackLayout Margin="15,30,15,30">
+                            <Label
+                                FontSize="32"
+                                LineBreakMode="NoWrap"
+                                Text="{Binding User.FullName}" />
+
+                            <Label
+                                FontSize="Subtitle"
+                                LineBreakMode="NoWrap"
+                                Text="{Binding User.Gender, Converter={StaticResource genderConvert}}" />
+
+                            <Label
+                                FontSize="Subtitle"
+                                LineBreakMode="NoWrap"
+                                Text="{Binding User.JobPosition}" />
+                            <StackLayout Orientation="Horizontal">
+                                <ff:CachedImage
+                                    HeightRequest="20"
+                                    HorizontalOptions="Center"
+                                    IsVisible="{Binding IsBusy, Converter={StaticResource inverteConvert}}"
+                                    Source="ic_location_red"
+                                    VerticalOptions="Center"
+                                    WidthRequest="20" />
+                                <Label
+                                    FontSize="Subtitle"
+                                    LineBreakMode="NoWrap"
+                                    Text="{Binding User.Location}" />
+                            </StackLayout>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
+
+
+
+            </ScrollView>
+
+        </RefreshView>
+        <Label
+            FontSize="Title"
+            HorizontalOptions="CenterAndExpand"
+            IsVisible="{Binding Error}"
+            Text="Error al buscar al buscar el usuario"
+            TextColor="Red"
+            VerticalOptions="CenterAndExpand" />
+
+    </Grid>
+
+</ContentPage>

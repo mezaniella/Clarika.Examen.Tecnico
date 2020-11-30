@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Clarika.Examen.Tecnico.Views.UsersPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:convert="clr-namespace:Clarika.Examen.Tecnico.Converters"
+    xmlns:local="clr-namespace:Clarika.Examen.Tecnico.ViewModels"
+    xmlns:model="clr-namespace:Clarika.Examen.Tecnico.Models"
+    Title="{Binding Title}"
+    BackgroundColor="White"
+    Shell.NavBarHasShadow="false"
+    Shell.NavBarIsVisible="true">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <convert:GenderConvert x:Key="genderConvert" />
+            <convert:InverterConverter x:Key="inverteConvert" />
+
+
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <StackLayout
+        BackgroundColor="White"
+        HorizontalOptions="FillAndExpand"
+        VerticalOptions="FillAndExpand">
+
+        <RefreshView
+            x:DataType="local:UsersViewModel"
+            Command="{Binding LoadUsersCommand}"
+            IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+            <CollectionView
+                x:Name="UsersListView"
+                EmptyView="No se encontraron usuarios"
+                IsVisible="{Binding Error, Converter={StaticResource inverteConvert}}"
+                ItemsSource="{Binding Users}"
+                SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <Frame
+                                Margin="10"
+                                x:DataType="model:User"
+                                BackgroundColor="{StaticResource Accent}"
+                                BorderColor="white"
+                                CornerRadius="20"
+                                HasShadow="True">
+                                <Grid BackgroundColor="{StaticResource Accent}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+
+                                    </Grid.RowDefinitions>
+
+
+                                    <Label
+                                        Grid.Row="0"
+                                        Grid.Column="0"
+                                        BackgroundColor="{StaticResource Accent}"
+                                        FontSize="Title"
+                                        LineBreakMode="NoWrap"
+                                        Style="{DynamicResource ListItemTextStyle}"
+                                        Text="{Binding FullName}" />
+
+                                    <Label
+                                        Grid.Row="1"
+                                        BackgroundColor="{StaticResource Accent}"
+                                        FontSize="Body"
+                                        LineBreakMode="NoWrap"
+                                        Style="{DynamicResource ListItemDetailTextStyle}"
+                                        Text="{Binding Gender, Converter={StaticResource genderConvert}}" />
+
+                                </Grid>
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:UsersViewModel}}, Path=ItemTapped}"
+                                        CommandParameter="{Binding .}"
+                                        NumberOfTapsRequired="1" />
+                                </Frame.GestureRecognizers>
+
+
+                            </Frame>
+
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <Label
+            FontSize="Title"
+            HorizontalOptions="CenterAndExpand"
+            IsVisible="{Binding Error}"
+            Text="Error al buscar los usuarios"
+            TextColor="Red"
+            VerticalOptions="CenterAndExpand" />
+    </StackLayout>
+</ContentPage>
